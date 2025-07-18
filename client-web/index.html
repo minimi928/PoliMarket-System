@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PoliMarket - Cliente Web</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PoliMarket - Sistema de Gestión</h1>
+            <p>Cliente Web para demostración de componentes</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="showTab('auth')">Autenticación (RF01)</button>
+            <button class="tab-btn" onclick="showTab('ventas')">Ventas (RF02)</button>
+            <button class="tab-btn" onclick="showTab('inventario')">Inventario (RF03)</button>
+            <button class="tab-btn" onclick="showTab('entregas')">Entregas (RF05)</button>
+        </nav>
+
+        <!-- Tab de Autenticación -->
+        <div id="auth" class="tab-content active">
+            <h2>Gestión de Autorizaciones (RF01)</h2>
+            
+            <div class="section">
+                <h3>Login de Vendedor</h3>
+                <form id="loginForm">
+                    <input type="email" id="loginEmail" placeholder="Email" value="carlos.rodriguez@polimarket.com" required>
+                    <input type="password" id="loginPassword" placeholder="Contraseña" value="password123" required>
+                    <button type="submit">Iniciar Sesión</button>
+                </form>
+                <div id="loginResult"></div>
+            </div>
+
+            <div class="section">
+                <h3>Consultar Vendedores</h3>
+                <button onclick="listarVendedores()">Listar Vendedores</button>
+                <button onclick="consultarVendedoresNoAutorizados()">Vendedores No Autorizados</button>
+                <div id="vendedoresResult"></div>
+            </div>
+        </div>
+
+        <!-- Tab de Ventas -->
+        <div id="ventas" class="tab-content">
+            <h2>Gestión de Ventas (RF02)</h2>
+            
+            <div class="section">
+                <h3>Consultar Ventas</h3>
+                <input type="number" id="vendedorId" placeholder="ID del Vendedor" value="1">
+                <button onclick="consultarVentasPorVendedor()">Consultar Ventas</button>
+                <div id="ventasResult"></div>
+            </div>
+
+            <div class="section">
+                <h3>Consultar Clientes</h3>
+                <button onclick="listarClientes()">Listar Clientes</button>
+                <div id="clientesResult"></div>
+            </div>
+        </div>
+
+        <!-- Tab de Inventario -->
+        <div id="inventario" class="tab-content">
+            <h2>Gestión de Inventario (RF03)</h2>
+            
+            <div class="section">
+                <h3>Consultar Productos</h3>
+                <button onclick="listarProductos()">Listar Productos</button>
+                <div id="productosResult"></div>
+            </div>
+
+            <div class="section">
+                <h3>Consultar Inventario</h3>
+                <input type="number" id="productoId" placeholder="ID del Producto" value="1">
+                <button onclick="consultarInventario()">Consultar Stock</button>
+                <button onclick="consultarProductosBajoStock()">Productos Bajo Stock</button>
+                <div id="inventarioResult"></div>
+            </div>
+        </div>
+
+        <!-- Tab de Entregas -->
+        <div id="entregas" class="tab-content">
+            <h2>Gestión de Entregas (RF05)</h2>
+            
+            <div class="section">
+                <h3>Consultar Entregas</h3>
+                <button onclick="listarEntregasPendientes()">Entregas Pendientes</button>
+                <div id="entregasResult"></div>
+            </div>
+        </div>
+
+        <div id="output" class="output-panel">
+            <h3>Respuestas de la API</h3>
+            <pre id="apiOutput"></pre>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
