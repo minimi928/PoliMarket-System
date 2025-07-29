@@ -2,7 +2,7 @@ from datetime import date
 from decimal import Decimal
 from sqlalchemy.orm import Session
 from app.models.database import SessionLocal, engine
-from app.models.entities import Base, Vendedor, Cliente, Producto, Inventario, Proveedor
+from app.models.entities import Base, Vendedor, Cliente, Producto, Inventario, Proveedor, Compra, DetalleCompra
 from app.models.schemas import VendedorCreate
 from app.components.auth_manager import AutorizacionManager
 
@@ -146,8 +146,58 @@ def init_db():
         )
         db.add(cliente2)
         
+        # Crear compras de ejemplo (RF04)
+        compra1 = Compra(
+            proveedor_id=proveedor1.id,
+            fecha_compra=date.today(),
+            fecha_entrega=date(2024, 12, 15),
+            total=Decimal('5000000.00'),
+            estado="PENDIENTE",
+            numero_orden="ORD-001-2024"
+        )
+        db.add(compra1)
+        db.flush()
+        
+        # Detalles de compra 1
+        detalle_compra1 = DetalleCompra(
+            compra_id=compra1.id,
+            producto_id=producto1.id,
+            cantidad=2,
+            precio_compra=Decimal('2200000.00')  # Precio de compra menor al de venta
+        )
+        db.add(detalle_compra1)
+        
+        detalle_compra2 = DetalleCompra(
+            compra_id=compra1.id,
+            producto_id=producto2.id,
+            cantidad=10,
+            precio_compra=Decimal('35000.00')  # Precio de compra menor al de venta
+        )
+        db.add(detalle_compra2)
+        
+        compra2 = Compra(
+            proveedor_id=proveedor2.id,
+            fecha_compra=date.today(),
+            fecha_entrega=date(2024, 12, 20),
+            total=Decimal('900000.00'),
+            estado="RECIBIDA",
+            numero_orden="ORD-002-2024"
+        )
+        db.add(compra2)
+        db.flush()
+        
+        # Detalles de compra 2
+        detalle_compra3 = DetalleCompra(
+            compra_id=compra2.id,
+            producto_id=producto3.id,
+            cantidad=5,
+            precio_compra=Decimal('150000.00')  # Precio de compra menor al de venta
+        )
+        db.add(detalle_compra3)
+        
         db.commit()
         print("Base de datos inicializada con datos de ejemplo")
+        print("✅ RF04 - Gestión de Proveedores implementado")
         
     except Exception as e:
         db.rollback()

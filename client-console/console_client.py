@@ -101,6 +101,86 @@ class PoliMarketConsoleClient:
         else:
             print("❌ Error consultando entregas")
     
+    def consultar_entregas_por_fecha(self, fecha):
+        """Consultar entregas por fecha (RF05)"""
+        result = self.api_call(f"/entregas/fecha/{fecha}")
+        
+        if result and result.get("success"):
+            entregas = result["data"]["entregas"]
+            print(f"\n📅 ENTREGAS DEL {fecha}:")
+            print("-" * 80)
+            if entregas:
+                for entrega in entregas:
+                    print(f"ID: {entrega['id']} | Venta: {entrega['venta_id']} | Fecha: {entrega['fecha_entrega']} | Estado: {entrega['estado']}")
+            else:
+                print("No hay entregas programadas para esta fecha")
+        else:
+            print("❌ Error consultando entregas por fecha")
+    
+    def listar_proveedores(self):
+        """Listar proveedores (RF04)"""
+        result = self.api_call("/proveedores/")
+        
+        if result and result.get("success"):
+            proveedores = result["data"]["proveedores"]
+            print(f"\n🏢 PROVEEDORES:")
+            print("-" * 80)
+            if proveedores:
+                for proveedor in proveedores:
+                    print(f"ID: {proveedor['id']} | {proveedor['nombre']} | {proveedor['documento']} | {proveedor['email'] or 'N/A'}")
+            else:
+                print("No hay proveedores registrados")
+        else:
+            print("❌ Error consultando proveedores")
+    
+    def buscar_proveedores(self, nombre):
+        """Buscar proveedores por nombre (RF04)"""
+        result = self.api_call(f"/proveedores/buscar/{nombre}")
+        
+        if result and result.get("success"):
+            proveedores = result["data"]["proveedores"]
+            print(f"\n🔍 RESULTADOS DE BÚSQUEDA PARA '{nombre}':")
+            print("-" * 80)
+            if proveedores:
+                for proveedor in proveedores:
+                    print(f"ID: {proveedor['id']} | {proveedor['nombre']} | {proveedor['documento']} | {proveedor['email'] or 'N/A'}")
+            else:
+                print("No se encontraron proveedores con ese nombre")
+        else:
+            print("❌ Error buscando proveedores")
+    
+    def listar_compras_pendientes(self):
+        """Listar compras pendientes (RF04)"""
+        result = self.api_call("/proveedores/compras/pendientes")
+        
+        if result and result.get("success"):
+            compras = result["data"]["compras"]
+            print(f"\n📋 COMPRAS PENDIENTES:")
+            print("-" * 80)
+            if compras:
+                for compra in compras:
+                    print(f"ID: {compra['id']} | Proveedor: {compra['proveedor_id']} | Fecha: {compra['fecha_compra']} | Total: ${compra['total']:,.0f} | Orden: {compra['numero_orden']}")
+            else:
+                print("No hay compras pendientes")
+        else:
+            print("❌ Error consultando compras")
+    
+    def consultar_compras_proveedor(self, proveedor_id):
+        """Consultar compras por proveedor (RF04)"""
+        result = self.api_call(f"/proveedores/compras/proveedor/{proveedor_id}")
+        
+        if result and result.get("success"):
+            compras = result["data"]["compras"]
+            print(f"\n📋 COMPRAS DEL PROVEEDOR {proveedor_id}:")
+            print("-" * 80)
+            if compras:
+                for compra in compras:
+                    print(f"ID: {compra['id']} | Fecha: {compra['fecha_compra']} | Total: ${compra['total']:,.0f} | Estado: {compra['estado']} | Orden: {compra['numero_orden']}")
+            else:
+                print("No hay compras registradas para este proveedor")
+        else:
+            print("❌ Error consultando compras del proveedor")
+    
     def crear_venta(self, vendedor_id, cliente_id, productos):
         """Crear una venta (RF02)"""
         data = {
@@ -129,8 +209,13 @@ class PoliMarketConsoleClient:
         print("3. Consultar Inventario")
         print("4. Consultar Ventas por Vendedor")
         print("5. Listar Entregas Pendientes")
-        print("6. Crear Venta")
-        print("7. Salir")
+        print("6. Consultar Entregas por Fecha")
+        print("7. Crear Venta")
+        print("8. Listar Proveedores")
+        print("9. Buscar Proveedores")
+        print("10. Listar Compras Pendientes")
+        print("11. Consultar Compras por Proveedor")
+        print("12. Salir")
         print("-"*60)
     
     def ejecutar(self):
@@ -171,31 +256,63 @@ class PoliMarketConsoleClient:
                     print("❌ Debe hacer login primero")
                     continue
                 
+                fecha = input("Fecha (YYYY-MM-DD): ").strip()
                 try:
-                    vendedor_id = int(input("ID del vendedor: ").strip())
-                    cliente_id = int(input("ID del cliente: ").strip())
-                    
-                    productos = []
-                    while True:
-                        producto_id = input("ID del producto (0 para terminar): ").strip()
-                        if producto_id == "0":
-                            break
-                        
-                        cantidad = int(input("Cantidad: ").strip())
-                        productos.append({
-                            "producto_id": int(producto_id),
-                            "cantidad": cantidad
-                        })
-                    
-                    if productos:
-                        self.crear_venta(vendedor_id, cliente_id, productos)
-                    else:
-                        print("❌ Debe agregar al menos un producto")
-                        
+                    self.consultar_entregas_por_fecha(fecha)
                 except ValueError:
-                    print("❌ Datos inválidos")
+                    print("❌ Formato de fecha inválido (YYYY-MM-DD)")
             
             elif opcion == "7":
+                if not self.auth_token:
+                    print("❌ Debe hacer login primero")
+                    continue
+                
+                vendedor_id = input("ID del vendedor: ").strip()
+                cliente_id = input("ID del cliente: ").strip()
+                
+                productos = []
+                while True:
+                    producto_id = input("ID del producto (o 'fin' para terminar): ").strip()
+                    if producto_id.lower() == 'fin':
+                        break
+                    cantidad = input("Cantidad: ").strip()
+                    try:
+                        productos.append({
+                            "producto_id": int(producto_id),
+                            "cantidad": int(cantidad)
+                        })
+                    except ValueError:
+                        print("❌ Valores inválidos")
+                
+                if productos:
+                    try:
+                        self.crear_venta(int(vendedor_id), int(cliente_id), productos)
+                    except ValueError:
+                        print("❌ IDs inválidos")
+                else:
+                    print("❌ No se especificaron productos")
+            
+            elif opcion == "8":
+                self.listar_proveedores()
+            
+            elif opcion == "9":
+                nombre = input("Nombre del proveedor: ").strip()
+                if nombre:
+                    self.buscar_proveedores(nombre)
+                else:
+                    print("❌ Debe ingresar un nombre")
+            
+            elif opcion == "10":
+                self.listar_compras_pendientes()
+            
+            elif opcion == "11":
+                proveedor_id = input("ID del proveedor: ").strip()
+                try:
+                    self.consultar_compras_proveedor(int(proveedor_id))
+                except ValueError:
+                    print("❌ ID de proveedor inválido")
+            
+            elif opcion == "12":
                 print("👋 ¡Hasta luego!")
                 break
             

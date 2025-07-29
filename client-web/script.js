@@ -366,14 +366,225 @@ async function listarEntregasPendientes() {
     }
 }
 
+// Consultar entregas por fecha
+async function consultarEntregasPorFecha() {
+    const fecha = document.getElementById('fechaEntrega').value;
+    
+    if (!fecha) {
+        displayResult('entregasFechaResult', 'Por favor seleccione una fecha', true);
+        return;
+    }
+    
+    try {
+        const result = await apiCall(`/entregas/fecha/${fecha}`);
+        
+        if (result.success && result.data.entregas) {
+            const table = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Venta ID</th>
+                            <th>Fecha Entrega</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.data.entregas.map(e => `
+                            <tr>
+                                <td>${e.id}</td>
+                                <td>${e.venta_id}</td>
+                                <td>${e.fecha_entrega}</td>
+                                <td>${e.estado}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            displayResult('entregasFechaResult', table);
+        } else {
+            displayResult('entregasFechaResult', 'No hay entregas programadas para esta fecha');
+        }
+    } catch (error) {
+        displayResult('entregasFechaResult', error.message, true);
+    }
+}
+
+// ===== RF04: PROVEEDORES =====
+
+// Listar proveedores
+async function listarProveedores() {
+    try {
+        const result = await apiCall('/proveedores/');
+        
+        if (result.success && result.data.proveedores) {
+            const table = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.data.proveedores.map(p => `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.nombre}</td>
+                                <td>${p.documento}</td>
+                                <td>${p.email || 'N/A'}</td>
+                                <td>${p.telefono || 'N/A'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            displayResult('proveedoresResult', table);
+        }
+    } catch (error) {
+        displayResult('proveedoresResult', error.message, true);
+    }
+}
+
+// Buscar proveedores por nombre
+async function buscarProveedores() {
+    const nombre = document.getElementById('nombreProveedor').value;
+    
+    if (!nombre) {
+        displayResult('proveedoresResult', 'Por favor ingrese un nombre para buscar', true);
+        return;
+    }
+    
+    try {
+        const result = await apiCall(`/proveedores/buscar/${nombre}`);
+        
+        if (result.success && result.data.proveedores) {
+            const table = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.data.proveedores.map(p => `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.nombre}</td>
+                                <td>${p.documento}</td>
+                                <td>${p.email || 'N/A'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            displayResult('proveedoresResult', table);
+        }
+    } catch (error) {
+        displayResult('proveedoresResult', error.message, true);
+    }
+}
+
+// Listar compras pendientes
+async function listarComprasPendientes() {
+    try {
+        const result = await apiCall('/proveedores/compras/pendientes');
+        
+        if (result.success && result.data.compras) {
+            const table = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Proveedor ID</th>
+                            <th>Fecha Compra</th>
+                            <th>Fecha Entrega</th>
+                            <th>Total</th>
+                            <th>Número Orden</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.data.compras.map(c => `
+                            <tr>
+                                <td>${c.id}</td>
+                                <td>${c.proveedor_id}</td>
+                                <td>${c.fecha_compra}</td>
+                                <td>${c.fecha_entrega}</td>
+                                <td>$${c.total.toLocaleString()}</td>
+                                <td>${c.numero_orden}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            displayResult('comprasResult', table);
+        }
+    } catch (error) {
+        displayResult('comprasResult', error.message, true);
+    }
+}
+
+// Consultar compras por proveedor
+async function consultarComprasPorProveedor() {
+    const proveedorId = document.getElementById('proveedorIdCompras').value;
+    
+    try {
+        const result = await apiCall(`/proveedores/compras/proveedor/${proveedorId}`);
+        
+        if (result.success && result.data.compras) {
+            const table = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha Compra</th>
+                            <th>Fecha Entrega</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Número Orden</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.data.compras.map(c => `
+                            <tr>
+                                <td>${c.id}</td>
+                                <td>${c.fecha_compra}</td>
+                                <td>${c.fecha_entrega}</td>
+                                <td>$${c.total.toLocaleString()}</td>
+                                <td>${c.estado}</td>
+                                <td>${c.numero_orden}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            displayResult('comprasResult', table);
+        }
+    } catch (error) {
+        displayResult('comprasResult', error.message, true);
+    }
+}
+
 // Verificar conexión al cargar la página
-window.onload = function() {
-    apiCall('/')
-        .then(data => {
-            console.log('API conectada:', data);
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha actual como valor por defecto
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fechaEntrega').value = today;
+    
+    // Verificar conexión con el servidor
+    apiCall('/health')
+        .then(result => {
+            if (result && result.status === 'healthy') {
+                console.log('✅ Conectado al servidor PoliMarket');
+            }
         })
-        .catch(err => {
-            console.error('Error conectando con la API:', err);
-            displayApiOutput({ error: 'No se pudo conectar con la API. Asegúrate de que el servidor esté ejecutándose en http://localhost:8000' });
+        .catch(error => {
+            console.log('❌ Error conectando al servidor:', error.message);
         });
-}; 
+}); 

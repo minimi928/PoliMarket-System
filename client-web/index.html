@@ -17,6 +17,7 @@
             <button class="tab-btn active" onclick="showTab('auth')">Autenticación (RF01)</button>
             <button class="tab-btn" onclick="showTab('ventas')">Ventas (RF02)</button>
             <button class="tab-btn" onclick="showTab('inventario')">Inventario (RF03)</button>
+            <button class="tab-btn" onclick="showTab('proveedores')">Proveedores (RF04)</button>
             <button class="tab-btn" onclick="showTab('entregas')">Entregas (RF05)</button>
         </nav>
 
@@ -79,6 +80,27 @@
             </div>
         </div>
 
+        <!-- Tab de Proveedores -->
+        <div id="proveedores" class="tab-content">
+            <h2>Gestión de Proveedores (RF04)</h2>
+            
+            <div class="section">
+                <h3>Consultar Proveedores</h3>
+                <button onclick="listarProveedores()">Listar Proveedores</button>
+                <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor">
+                <button onclick="buscarProveedores()">Buscar Proveedores</button>
+                <div id="proveedoresResult"></div>
+            </div>
+
+            <div class="section">
+                <h3>Consultar Compras</h3>
+                <button onclick="listarComprasPendientes()">Compras Pendientes</button>
+                <input type="number" id="proveedorIdCompras" placeholder="ID del Proveedor" value="1">
+                <button onclick="consultarComprasPorProveedor()">Compras por Proveedor</button>
+                <div id="comprasResult"></div>
+            </div>
+        </div>
+
         <!-- Tab de Entregas -->
         <div id="entregas" class="tab-content">
             <h2>Gestión de Entregas (RF05)</h2>
@@ -87,6 +109,13 @@
                 <h3>Consultar Entregas</h3>
                 <button onclick="listarEntregasPendientes()">Entregas Pendientes</button>
                 <div id="entregasResult"></div>
+            </div>
+
+            <div class="section">
+                <h3>Consultar Entregas por Fecha</h3>
+                <input type="date" id="fechaEntrega" value="">
+                <button onclick="consultarEntregasPorFecha()">Consultar por Fecha</button>
+                <div id="entregasFechaResult"></div>
             </div>
         </div>
 

@@ -14,7 +14,8 @@ PoliMarket-System/
 │   │   │   ├── auth_manager.py
 │   │   │   ├── venta_manager.py
 │   │   │   ├── inventario_manager.py
-│   │   │   └── entrega_manager.py
+│   │   │   ├── entrega_manager.py
+│   │   │   └── proveedor_manager.py
 │   │   ├── models/          # Modelos de datos
 │   │   │   ├── database.py
 │   │   │   ├── entities.py
@@ -23,7 +24,8 @@ PoliMarket-System/
 │   │   │   ├── auth.py
 │   │   │   ├── ventas.py
 │   │   │   ├── inventario.py
-│   │   │   └── entregas.py
+│   │   │   ├── entregas.py
+│   │   │   └── proveedores.py
 │   │   └── main.py          # Aplicación principal
 │   ├── requirements.txt
 │   ├── run.py
@@ -42,7 +44,7 @@ PoliMarket-System/
 - **RF01**: Gestión de Autorizaciones - Autenticación y autorización de vendedores
 - **RF02**: Gestión de Ventas - Creación y consulta de ventas, gestión de clientes
 - **RF03**: Gestión de Inventario - Consulta de productos y control de stock
-- **RF04**: Gestión de Proveedores - Registro de productos y proveedores
+- **RF04**: Gestión de Proveedores - Registro de productos y proveedores, gestión de compras
 - **RF05**: Gestión de Entregas - Programación y seguimiento de entregas
 
 ## Instalación y Ejecución
@@ -78,6 +80,8 @@ El servidor estará disponible en: http://localhost:8000
 - Vendedor 2: `ana.martinez@polimarket.com` / `password123`
 - Clientes: ID 1 y 2
 - Productos: ID 1, 2 y 3
+- Proveedores: ID 1 y 2
+- Compras: ID 1 y 2
 
 ### 2. Cliente Web
 
@@ -96,7 +100,8 @@ El cliente web incluye:
 - **RF01**: Login de vendedores, consulta de autorizaciones
 - **RF02**: Consulta de ventas por vendedor, listado de clientes
 - **RF03**: Listado de productos, consulta de inventario
-- **RF05**: Consulta de entregas pendientes
+- **RF04**: Listado de proveedores, búsqueda de proveedores, consulta de compras
+- **RF05**: Consulta de entregas pendientes, consulta de entregas por fecha
 
 ### 3. Cliente Consola
 
@@ -109,7 +114,8 @@ El cliente de consola incluye:
 - **RF01**: Login de vendedores
 - **RF02**: Consulta de ventas, creación de ventas
 - **RF03**: Listado de productos, consulta de inventario
-- **RF05**: Consulta de entregas pendientes
+- **RF04**: Listado de proveedores, búsqueda de proveedores, consulta de compras
+- **RF05**: Consulta de entregas pendientes, consulta de entregas por fecha
 
 ## Componentes Implementados
 
@@ -121,12 +127,15 @@ El cliente de consola incluye:
 - **ProductoManager**: Gestión de productos
 - **EntregaManager**: Gestión de entregas
 - **LogisticaManager**: Coordinación logística
+- **ProveedorManager**: Gestión de proveedores
+- **CompraManager**: Gestión de compras y órdenes
 
 ### Capa de Cliente (Facades)
 - **AuthFacade**: Endpoints de autenticación
 - **VentasFacade**: Endpoints de ventas y clientes
 - **InventarioFacade**: Endpoints de productos e inventario
 - **EntregasFacade**: Endpoints de entregas
+- **ProveedoresFacade**: Endpoints de proveedores y compras
 
 ## Endpoints de la API
 
@@ -153,6 +162,20 @@ El cliente de consola incluye:
 - `GET /inventario/bajo-stock` - Productos bajo stock
 - `POST /inventario/productos` - Crear producto
 - `POST /inventario/stock/{producto_id}` - Actualizar stock
+
+### Proveedores (RF04)
+- `POST /proveedores/` - Crear proveedor
+- `GET /proveedores/{proveedor_id}` - Consultar proveedor
+- `GET /proveedores/` - Listar proveedores
+- `PUT /proveedores/{proveedor_id}` - Actualizar proveedor
+- `DELETE /proveedores/{proveedor_id}` - Eliminar proveedor
+- `GET /proveedores/buscar/{nombre}` - Buscar proveedores
+- `POST /proveedores/compras/` - Registrar compra
+- `GET /proveedores/compras/{compra_id}` - Consultar compra
+- `GET /proveedores/compras/proveedor/{proveedor_id}` - Compras por proveedor
+- `GET /proveedores/compras/pendientes` - Compras pendientes
+- `PUT /proveedores/compras/{compra_id}/estado` - Actualizar estado de compra
+- `GET /proveedores/compras/{compra_id}/total` - Calcular total de compra
 
 ### Entregas (RF05)
 - `POST /entregas/{venta_id}` - Programar entrega
@@ -188,6 +211,7 @@ El sistema sigue una arquitectura de componentes con:
 - Consulta de productos disponibles (RF03)
 - Login y gestión de vendedores (RF01)
 - Consulta de ventas y clientes (RF02)
+- Gestión de proveedores y compras (RF04)
 - Seguimiento de entregas (RF05)
 
 ### Cliente Consola
@@ -195,6 +219,7 @@ El sistema sigue una arquitectura de componentes con:
 - Autenticación de vendedores (RF01)
 - Consulta de inventario (RF03)
 - Creación de ventas (RF02)
+- Gestión de proveedores y compras (RF04)
 - Seguimiento de entregas (RF05)
 
 ## Notas de Desarrollo
@@ -216,4 +241,4 @@ El sistema sigue una arquitectura de componentes con:
 
 Una vez ejecutado el servidor, la documentación automática estará disponible en:
 - **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc 
+- **ReDoc**: http://localhost:8000/redoc

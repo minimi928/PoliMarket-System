@@ -132,4 +132,52 @@ class LoginResponse(BaseModel):
 class ResponseDTO(BaseModel):
     success: bool
     message: str
-    data: Optional[dict] = None 
+    data: Optional[dict] = None
+
+# Esquemas para RF04 - Gestión de Proveedores
+class ProveedorBase(BaseModel):
+    tipo_documento: str
+    documento: str
+    nombre: str
+    contacto: Optional[str] = None
+    email: Optional[str] = None
+    telefono: Optional[str] = None
+    direccion: Optional[str] = None
+
+class ProveedorCreate(ProveedorBase):
+    pass
+
+class Proveedor(ProveedorBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
+class CompraBase(BaseModel):
+    proveedor_id: int
+    fecha_compra: date
+    fecha_entrega: date
+    estado: str = "PENDIENTE"
+    numero_orden: str
+
+class CompraCreate(CompraBase):
+    detalles: List[dict]  # Lista de productos con cantidad y precio_compra
+
+class Compra(CompraBase):
+    id: int
+    total: Decimal
+    
+    class Config:
+        from_attributes = True
+
+class DetalleCompraBase(BaseModel):
+    compra_id: int
+    producto_id: int
+    cantidad: int
+    precio_compra: Decimal
+
+class DetalleCompra(DetalleCompraBase):
+    id: int
+    
+    class Config:
+        from_attributes = True 

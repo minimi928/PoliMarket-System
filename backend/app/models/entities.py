@@ -129,4 +129,32 @@ class Autorizacion(Base):
     rrhh_responsable = Column(String(100), nullable=False)
     
     # Relaciones
-    vendedor = relationship("Vendedor", back_populates="autorizacion") 
+    vendedor = relationship("Vendedor", back_populates="autorizacion")
+
+class Compra(Base):
+    __tablename__ = "compras"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    proveedor_id = Column(Integer, ForeignKey("proveedores.id"))
+    fecha_compra = Column(Date, nullable=False)
+    fecha_entrega = Column(Date, nullable=False)
+    total = Column(Numeric(10, 2), default=0)
+    estado = Column(String(20), default="PENDIENTE")
+    numero_orden = Column(String(50), unique=True)
+    
+    # Relaciones
+    proveedor = relationship("Proveedor")
+    detalles = relationship("DetalleCompra", back_populates="compra")
+
+class DetalleCompra(Base):
+    __tablename__ = "detalles_compra"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    compra_id = Column(Integer, ForeignKey("compras.id"))
+    producto_id = Column(Integer, ForeignKey("productos.id"))
+    cantidad = Column(Integer, nullable=False)
+    precio_compra = Column(Numeric(10, 2), nullable=False)
+    
+    # Relaciones
+    compra = relationship("Compra", back_populates="detalles")
+    producto = relationship("Producto") 

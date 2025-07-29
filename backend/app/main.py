@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .models.database import engine
 from .models.entities import Base
-from .api import auth, ventas, inventario, entregas
+from .api import auth, ventas, inventario, entregas, proveedores
 
 # Crear tablas
 Base.metadata.create_all(bind=engine)
@@ -27,6 +27,7 @@ app.include_router(auth.router)
 app.include_router(ventas.router)
 app.include_router(inventario.router)
 app.include_router(entregas.router)
+app.include_router(proveedores.router)
 
 @app.get("/")
 def read_root():
@@ -37,7 +38,8 @@ def read_root():
             "auth": "/auth",
             "ventas": "/ventas", 
             "inventario": "/inventario",
-            "entregas": "/entregas"
+            "entregas": "/entregas",
+            "proveedores": "/proveedores"
         }
     }
 
